@@ -1,0 +1,24 @@
+{
+  "name": "aquarius-node",
+  "version": "1.0.0",
+  "description": "A simple rest server with an angular frontend",
+  "main": "rest.js",
+  "scripts": {
+    "start": "node forum.js"
+  },
+  "keywords": [
+    "node",
+    "heroku",
+    "express"
+  ],
+  "engines": {
+    "node": "0.10.x"
+  },
+  "author": "Fred Nobre",
+  "license": "ISC",
+  "dependencies": {
+    "express": "~4.9.x",
+    "body-parser": "~1.8.x",
+    "mongoose": "~3.8.x"
+  }
+}
