@@ -8,10 +8,15 @@ var init = function () {
     'use strict';
     var folders = ['css', 'app', 'js', 'img', 'data', 'template'],
         express = require('express'),
+        mongoose = require('mongoose'),
         bodyParser = require('body-parser'),
         // module perso
-        persistenceModule = require('./module/Persistence'),
         restModule = require('./module/RestModule'),
+        subjectModule = require('./module/SubjectModule'),
+        postModule = require('./module/PostModule'),
+        searchTokenModule = require('./module/SearchTokenModule'),
+        searchPostModule = require('./module/SearchPostModule'),
+        db = null,
         serverInstance = express(),
         index = null,
         setFolder = function (folder) {
@@ -20,11 +25,14 @@ var init = function () {
         },
         connectionOpen = function callback() {
 
+            var post = new postModule.build(mongoose),
+                subject = new subjectModule.build(mongoose),
+                postSearch = new searchPostModule.build(mongoose);
             console.log("connection open");
             serverInstance.use(bodyParser.json());
-            //restModule.restRessource(serverInstance, "", "post", post, ["subject"]);
-            //restModule.restRessource(serverInstance, "", "subject", subject);
-            //restModule.restRessource(serverInstance, "/post", "search", postSearch);
+            restModule.restRessource(serverInstance, "", "post", post, ["subject"]);
+            restModule.restRessource(serverInstance, "", "subject", subject);
+            restModule.restRessource(serverInstance, "/post", "search", postSearch);
             serverInstance.use(function (req, res, next) {
                 res.setHeader('Content-Type', 'text/html');
                 var error = '<html><body>';
@@ -37,6 +45,8 @@ var init = function () {
             console.log('Express Server running at http://127.0.0.1:8080/');
         };
 
+    mongoose.connect('mongodb://localhost/test');
+    db = mongoose.connection;
     for (index in folders) {
         if (folders.hasOwnProperty(index)) {
             setFolder(folders[index]);
@@ -46,13 +56,7 @@ var init = function () {
     serverInstance.use(bodyParser.urlencoded({
         extended: false
     }));
-
-    persistenceModule.connect()
-    	.success(connectionOpen)
-    	.error(function(data){
-    		console.error('connection error:', data);
-    		}
-    	);
-    
+    db.on('error', console.error.bind(console, 'connection error:'));
+    db.once('open', connectionOpen);
 };
 init();
