@@ -42,8 +42,17 @@ var connect = function() {
 	return promise;
 }, read = function() {
 }, write = function() {
+},
+getModelInterface = function(model){
+
+    
+    var PostSchema = mongoose.Schema(model);
+    var PostModel = mongoose.model('post', PostSchema);
+    console.log("post schema created");
+    return PostModel;
 };
 
 exports.connect = connect;
+exports.getModelInterface = getModelInterface;
 exports.read = read;
 exports.write = write;

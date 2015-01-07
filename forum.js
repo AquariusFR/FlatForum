@@ -12,6 +12,9 @@ var init = function () {
         // module perso
         persistenceModule = require('./module/Persistence'),
         restModule = require('./module/RestModule'),
+        subjectModule = require('./module/SubjectModule'),
+        postModule = require('./module/PostModule'),
+        searchPostModule = require('./module/SearchPostModule'),
         serverInstance = express(),
         index = null,
         setFolder = function (folder) {
@@ -20,11 +23,14 @@ var init = function () {
         },
         connectionOpen = function callback() {
 
+            var post = new postModule.build(persistenceModule),
+                subject = new subjectModule.build(persistenceModule),
+                postSearch = new searchPostModule.build(persistenceModule);
             console.log("connection open");
             serverInstance.use(bodyParser.json());
-            //restModule.restRessource(serverInstance, "", "post", post, ["subject"]);
-            //restModule.restRessource(serverInstance, "", "subject", subject);
-            //restModule.restRessource(serverInstance, "/post", "search", postSearch);
+            restModule.restRessource(serverInstance, "", "post", post, ["subject"]);
+            restModule.restRessource(serverInstance, "", "subject", subject);
+            restModule.restRessource(serverInstance, "/post", "search", postSearch);
             serverInstance.use(function (req, res, next) {
                 res.setHeader('Content-Type', 'text/html');
                 var error = '<html><body>';
